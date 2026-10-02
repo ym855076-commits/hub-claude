@@ -120,8 +120,16 @@ select{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-
 <div class="card" style="--a:#b45309">
   <h3 data-i="lesson"></h3>
   <div class="g2"><select id="ls"></select><input id="lc" data-p="ltime"></div>
-  <div id="fe"><input id="lt" data-p="ltopic" style="margin-bottom:8px">
-  <div class="g2"><input id="lg" data-p="lgoal"><input id="lm" data-p="lequip"></div></div>
+  <!-- Улучшение: Кнопка быстрого переключения даты на +1 день -->
+  <div class="row" style="margin-bottom:8px">
+    <button class="b" id="ldatePlus1" style="font-size:12px; padding:4px 8px;">📅 +1 gün (Завтра)</button>
+  </div>
+  <div id="fe">
+    <!-- Улучшение: Список подсказок (datalist) для тем, чтобы помнить последние варианты -->
+    <input id="lt" data-p="ltopic" list="topicsHistory" style="margin-bottom:8px">
+    <datalist id="topicsHistory"></datalist>
+    <div class="g2"><input id="lg" data-p="lgoal"><input id="lm" data-p="lequip"></div>
+  </div>
   <div id="tf" hidden></div>
   <textarea id="lo" data-p="lph" style="height:240px;margin-bottom:8px"></textarea>
   <div class="row"><button class="b p" id="lb" data-i="build"></button><button class="b" id="lp" data-i="aiPrompt"></button><button class="b" id="lx" data-i="exp"></button><button class="b" id="lcp" data-i="copyBtn"></button></div>
@@ -145,7 +153,7 @@ const s=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 
 // ---- Настройки ----
 const LAT=39.0733, LON=63.5786, TZ='Asia/Ashgabat';
-const METHOD=13, SCHOOL=1; // 13 = Diyanet, SCHOOL 1 = ханафитский аср. Сверь со своей таблицей!
+const METHOD=13, SCHOOL=1;
 const WORK=25*60, REST=5*60;
 const AYAT=['65:3','94:6','2:152','13:28','2:286','3:139','39:53'];
 
@@ -214,8 +222,8 @@ $('fi').onchange=e=>{
   f.text().then(x=>{$('nt').value=x;s('hub_notes',x)});e.target.value='';
 };
 
-// ---- Таймер (Pomodoro 25/5, переживает перезагрузку) ----
-let ts=null; // {mode:'work'|'rest', end:ms}
+// ---- Таймер (Pomodoro 25/5) ----
+let ts=null;
 try{ts=JSON.parse(g('hub_timer'))}catch(e){}
 let iv=null;
 const pad=n=>String(n).padStart(2,'0');
@@ -245,39 +253,44 @@ $('fb').onclick=()=>{
 if(ts)runTimer();
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
 
-// ---- Намаз (Aladhan API, кэш по дате) ----
+// ---- Намаз ----
 let pdata=null;
-function dateKey(){const d=new Date();return pad(d.getDate())+'-'+pad(d.getMonth()+1)+'-'+d.getFullYear()}
-async function loadPrayer(){
-  const key='hub_pt_'+dateKey();
+function dateKey(offsetDays=0){
+  const d=new Date();
+  d.setDate(d.getDate()+offsetDays);
+  return pad(d.getDate())+'-'+pad(d.getMonth()+1)+'-'+d.getFullYear();
+}
+async function loadPrayer(offset=0){
+  const dk=dateKey(offset);
+  const key='hub_pt_'+dk;
   try{pdata=JSON.parse(g(key))}catch(e){}
   if(!pdata){
     try{
-      const u=`https://api.aladhan.com/v1/timings/${dateKey()}?latitude=${LAT}&longitude=${LON}&method=${METHOD}&school=${SCHOOL}&timezonestring=${TZ}`;
+      const u=`https://api.aladhan.com/v1/timings/${dk}?latitude=${LAT}&longitude=${LON}&method=${METHOD}&school=${SCHOOL}&timezonestring=${TZ}`;
       const r=await fetch(u);const j=await r.json();
       pdata=j.data.timings;s(key,JSON.stringify(pdata));
     }catch(e){}
   }
-  renderPrayer();
+  renderPrayer(offset);
 }
-function renderPrayer(){
+function renderPrayer(offset=0){
   const box=$('pt');box.textContent='';
   if(!pdata){$('pinfo').textContent='Туркменабат · '+(navigator.onLine?t('loading'):t('offline'));return}
-  $('pinfo').textContent='Туркменабат · '+dateKey().replace(/-/g,'.');
+  $('pinfo').textContent='Туркменабат · '+dateKey(offset).replace(/-/g,'.');
   const keys=['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'];
   const now=new Date(new Date().toLocaleString('en-US',{timeZone:TZ}));
   const nm=now.getHours()*60+now.getMinutes();
-  let next=keys.findIndex(k=>{const[h,m]=pdata[k].split(':');return +h*60+ +m>nm});
-  if(next<0)next=0;
+  let next=offset!==0?-1:keys.findIndex(k=>{const[h,m]=pdata[k].split(':');return +h*60+ +m>nm});
+  if(next<0 && offset===0)next=0;
   keys.forEach((k,i)=>{
     const d=document.createElement('div');if(i===next)d.className='nx';
     const b=document.createElement('b');b.textContent=pdata[k].slice(0,5);
     d.append(b,t('names')[i]);box.append(d);
   });
 }
-loadPrayer();setInterval(renderPrayer,60000);
+loadPrayer(0);setInterval(()=>loadPrayer(window.currentPrayerOffset||0),60000);
 
-// ---- Аят дня (текст и перевод из alquran.cloud, кэш) ----
+// ---- Аят дня ----
 function ayIndex(){
   const day=Math.floor(Date.now()/86400000);
   return (day+ai)%AYAT.length;
@@ -286,7 +299,7 @@ async function loadAyah(){
   const ref=AYAT[ayIndex()],[sura,num]=ref.split(':');
   $('ref').textContent=`${sura}:${num}`;
   $('tf').href=`https://quran.com/${sura}:${num}/tafsirs`;
-  $('an').value=g('hub_an_'+ref)||'';$('an').oninput=e=>s('hub_an_'+ref,e.target.value);
+  $('an').value=g('hub_an_'+ref)\vert{}\vert{}'';$('an').oninput=e=>s('hub_an_'+ref,e.target.value);
   let d=null;
   try{d=JSON.parse(g('hub_ay_'+ref))}catch(e){}
   if(!d){
@@ -302,14 +315,14 @@ async function loadAyah(){
 }
 $('nx').onclick=()=>{ai++;loadAyah()};
 
-// ---- План мероприятия и режим дня (текст всегда по-туркменски, как в тетради) ----
+// ---- План мероприятия и режим дня ----
 const GEN=[['Gürrüň döwri','Dogry oturyň, maňa ünsli serediň!'],['Gürrüň soraglary','Häzir näçenji ýyl?'],['Täze sözler',''],['Işiň gidişi, gaýtalamak we berkitmek','']];
 const LUNCH=tm=>tm+'  Günortanlyk nahary\nMaksady: Çagalary naharlanmak, sözleýşini ösdürmek.\n- Sen näme iýdiň?\n- Men etli kelemli çorba, çörek iýdim.';
 const GOAL={'Sport oýunlar':T=>'Çagalara «'+T+'» oýnunyň adyny we düzgünini öwretmek. Agzybirligi terbiýelemek.','Hojalyk zähmet':T=>'Çagalara «'+T+'» barada düşündirmek, täze sözleri tanyşdyrmak. Zähmet söýgüsini terbiýelemek.','Medeni dynç alyş':T=>'Çagalara «'+T+'» barada gürrüň bermek, sözleýşini ösdürmek. Dostlugy terbiýelemek.'};
 const ESB={'Sport oýunlar':'Top, suratlar.','Hojalyk zähmet':'bedre, süpürgi, eşik.','Medeni dynç alyş':'Kagyz, reňkli galamlar.'};
-const EV=(tm,name,tok,sok)=>tm+'  '+name+'\nTema: {{'+tok+'}}\nMaksady: '+GOAL[name]('{{'+tok+'}}')+'\nEsbaby: '+ESB[name]+'\nGidişi:\n1) Gürrüň döwri:\n   Dogry oturyň, maňa ünsli serediň!\n2) Gürrüň soraglary:\n   Häzir näçenji ýyl?\n3) Täze sözler:\n   {{'+sok+'}}\n4) Işiň gidişi, gaýtalamak we berkitmek.';
+const EV=(tm,name,tok,sok)=>tm+'  '+name+'\nTema: **{{'+tok+'}}**\nMaksady: '+GOAL[name]('{{'+tok+'}}')+'\nEsbaby: '+ESB[name]+'\nGidişi:\n1) Gürrüň döwri:\n   Dogry oturyň, maňa ünsli serediň!\n2) Gürrüň soraglary:\n   Häzir näçenji ýyl?\n3) Täze sözler:\n   {{'+sok+'}}\n4) Işiň gidişi, gaýtalamak we berkitmek.';
 const HW='16:00  Öý berlen işi ýerine ýetirmek\nMaksady: Mugallymyň öý berlen işini ýerine ýetirmek, gaýtalamak we berkitmek.\nEsbaby: Kitap, depder, ýazgylar.\nGidişi:\n1) Gürrüň döwri:\n   Maňa ünsli serediň!\n2) Gürrüň soraglary:\n   Häzir haýsy pasyl?\n3) Fon. maşk:\n   Şu gün "{{Звук (R, S, L…)}}" sesi nobatçy ses.\n   Matem. soraglaryny ýatdan hasaplatmak.\n   Mysaly işletmek.\n4) Berkitmek:\n   Sorag-jogap arkaly berkitmek.\n   Sen näme etdiň? - Men okadym, ýazdym.\n5) Jemi:\n   Biz näme etdik?\n   Biz ýazdyk, okadyk, mysal çözdük.';
-const READ='17:30  Synpdan daşary okuw\nTema: {{Тема 17:30}}\nMaksady: Çagalara «{{Тема 17:30}}» barada düşündirmek, täze sözleri öwretmek. Agzybirligi, dostlugy terbiýelemek.\nEsbaby: Kitap, suratlar.\nGidişi:\n1) Gürrüň döwri:\n   Maňa ünsli serediň!\n2) Gürrüň soraglary:\n   Häzir haýsy pasyl?\n3) Täze sözler:\n   {{Слова 17:30}}\n4) Okamak we soraglara jogap bermek.';
+const READ='17:30  Synpdan daşary okuw\nTema: **{{Тема 17:30}}**\nMaksady: Çagalara «{{Тема 17:30}}» barada düşündirmek, täze sözleri öwretmek. Agzybirligi, dostlugy terbiýelemek.\nEsbaby: Kitap, suratlar.\nGidişi:\n1) Gürrüň döwri:\n   Maňa ünsli serediň!\n2) Gürrüň soraglary:\n   Häzir haýsy pasyl?\n3) Täze sözler:\n   {{Слова 17:30}}\n4) Okamak we soraglara jogap bermek.';
 const AFTER=n15=>['13:00  Kabul etmek\nÇagalary kabul etmek, öý ýumuşlaryny soramak.',LUNCH('14:00'),EV('15:00',n15,'Тема 15:00','Слова 15:00'),HW,READ,'19:00  Agşamlyk nahary\n20:30  Uka taýýarlyk\n21:00  Uky'];
 const MORN=['7:00  Ukudan oýarmak\nÇagalary ukudan oýarmak, egin-eşigini geýmegi we düşegini özbaşdak ýygnamagy öwretmek.\n- Salam, tur!\n- Men düşegimi ýygnadym.','7:10  Beden maşklaryny ýetirmek\nÇagalar bilen beden maşklaryny ýetirmek.\nMaşklary 1, 2, 3, 4 sanap ýerine ýetirmek.','7:35  Şahsy arassaçylyk\nÇagalara el-ýüzüni, dişini arassa ýuwmagy öwretmek, dogry berjaý etmek.','7:50  Ertirlik nahary\nÇagalary naharlanmak.\n- Sen näme iýdiň?\n- Men süýtli aş, çörek iýdim.','8:20  Sapaga taýýarlyk\nÇagalaryň egin-eşiklerini çalyşmak, sapaga taýýarlyk.\n- Eşigiňizi çalşyryň!\n- Köýnegiňi dogry geý!\n- Kim nobatçy? Eşigini ollap goý!','8:30  Çagalary mugallyma tabşyrmak'];
 const FULL=['8:00  Ukudan oýarmak\nÇagalary ukudan oýarmak, düşeklerini ýygnamagy öwretmek.\n- Salam, çagalar! Turuň!\n- Men turdym, düşegimi ýygnadym.','8:30  Ertirlik nahary\nÇagalaryň el-ýüzüni ýuwdyrmak. Nahar wagty dogry oturmagy öwretmek.\n- Sen näme iýdiň?\n- Men süýtli aş, çörek iýdim, çaý içdim.',LUNCH('12:30'),EV('14:00','Medeni dynç alyş','Тема 14:00','Слова 14:00'),'16:00  Oýlanlyk nahary iýdirmek',EV('18:00','Medeni dynç alyş','Тема 18:00','Слова 18:00'),'19:00  Agşamlyk nahary\n20:30  Uka taýýarlyk\n21:00  Uky'];
@@ -328,9 +341,46 @@ const KINDS=[
  {ru:'Другое',tk:'Başga',time:'',goal:'',equip:'',steps:GEN},
 ];
 const TKD=['Ýekşenbe','Duşenbe','Sişenbe','Çarşenbe','Penşenbe','Anna','Şenbe'];
-['ls','lc','lt','lg','lm','lo'].forEach(id=>{
+['ls','lc','lg','lm','lo'].forEach(id=>{
   const e=$(id);e.value=g('hub_'+id)||'';e.oninput=e.onchange=()=>s('hub_'+id,e.value);
 });
+
+// Улучшение: Сохранение истории тем в localStorage и вывод в datalist
+let topicHistory = [];
+try { topicHistory = JSON.parse(g('hub_topics_history')) || []; } catch(e){}
+function updateTopicsHistory(val){
+  if(!val || val.trim()==='') return;
+  if(!topicHistory.includes(val)){
+    topicHistory.unshift(val);
+    if(topicHistory.length > 15) topicHistory.pop();
+    s('hub_topics_history', JSON.stringify(topicHistory));
+    renderTopicsDatalist();
+  }
+}
+function renderTopicsDatalist(){
+  const dl = $('topicsHistory');
+  if(!dl) return;
+  dl.textContent='';
+  topicHistory.forEach(item=>{
+    const opt = document.createElement('option');
+    opt.value = item;
+    dl.append(opt);
+  });
+}
+renderTopicsDatalist();
+
+$('lt').oninput=e=>{ s('hub_lt', e.target.value); };$('lt').onchange=e=>{ updateTopicsHistory(e.target.value); };
+
+// Улучшение: Кнопка +1 день (завтрашний день для плана)
+let lessonDayOffset = 0;
+$('ldatePlus1').onclick=()=>{
+  lessonDayOffset = lessonDayOffset === 0 ? 1 : 0;
+  $('ldatePlus1.style') // visual toggle indicator if needed$('ldatePlus1').textContent = lessonDayOffset === 1 ? '📅 Ertir üçin (+1 gün)' : '📅 +1 gün (Завтра)';
+  const x=lessonText();$('lo').value=x;
+};
+
+fillKinds();
+
 function fillKinds(){
   const sel=$('ls'),cur=sel.value||g('hub_ls')||'0';sel.textContent='';
   KINDS.forEach((k,i)=>{const o=document.createElement('option');o.value=i;o.textContent=lang==='ru'?k.ru+(k.tpl?'':' · '+k.tk):k.tk;sel.append(o)});
@@ -352,30 +402,44 @@ function renderTf(){
   box.hidden=!names.length;
   names.forEach(n=>{
     const i=document.createElement('input');i.placeholder=n;i.value=g('hub_tf_'+n)||'';i.style.marginBottom='8px';
-    i.oninput=()=>s('hub_tf_'+n,i.value);box.append(i);
+    i.oninput=e=>{
+      s('hub_tf_'+n,i.value);
+      if(n.toLowerCase().includes('tema') || n.toLowerCase().includes('тема')){
+        updateTopicsHistory(i.value);
+      }
+    };
+    box.append(i);
   });
 }
 function dayLine(){
   const d=new Date();
+  d.setDate(d.getDate() + lessonDayOffset);
   return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+String(d.getFullYear()).slice(2)+' ý. '+TKD[d.getDay()]+' güni';
 }
 function lessonText(){
   const k=curKind(),dl=dayLine(),end=['',`Barlandy: ________   ${dl.split(' ')[0]}`];
-  if(k.tpl){const body=k.tpl.join('\n\n').replace(/\{\{([^}]+)\}\}/g,(m,n)=>(g('hub_tf_'+n)||'').trim()||'________');return [dl,'',body,...end].join('\n')}
-  const v=id=>$(id).value.trim()||'________',tm=$('lc').value.trim();
-  const out=[dl,'',(tm?tm+' ':'')+k.tk,`Tema: ${v('lt')}`,`Maksady: ${v('lg')}`,`Esbaby: ${v('lm')}`];
+  if(k.tpl){
+    const body=k.tpl.join('\n\n').replace(/\{\{([^}]+)\}\}/g,(m,n)=>{
+      const val = (g('hub_tf_'+n)||'').trim();
+      return val ? `**${val}**` : '________';
+    });
+    return [dl,'',body,...end].join('\n');
+  }
+  const v=id=>$(id).value.trim()\vert{}\vert{}'________',tm=$('lc').value.trim();
+  const themeVal = v('lt');
+  if(themeVal !== '________') updateTopicsHistory(themeVal);
+  const out=[dl,'',(tm?tm+' ':'')+k.tk,`Tema: **${themeVal}**`,`Maksady: ${v('lg')}`,`Esbaby: ${v('lm')}`];
   if(k.steps){out.push('','Gidişi:');k.steps.forEach(([a,b],i)=>out.push(`${i+1}) ${a}:`,'   '+(b||'________').replace(/\n/g,'\n   ')))}
   if(k.extra)out.push('',k.extra);
   return out.concat(end).join('\n');
 }
 function aiPromptText(){
-  const k=curKind(),v=id=>$(id).value.trim()||'—',tm=$('lc').value.trim();
+  const k=curKind(),v=id=>$(id).value.trim()\vert{}\vert{}'—',tm=$('lc').value.trim();
   if(k.tpl)return '';
   return [t('pin'),k.tk+(tm?' ('+tm+')':''),`${t('ltopic')}: ${v('lt')}`,`${t('lgoalL')}: ${v('lg')}`,`${t('lequipL')}: ${v('lm')}`,
     t('lcourse')+': '+(k.steps?k.steps.map(x=>x[0]).join(' → '):'')+'.',t('pout')].join('\n');
 }
-$('lb').onclick=()=>{const x=lessonText();$('lo').value=x;s('hub_lo',x)};
-$('lp').onclick=async()=>{
+$('lb').onclick=()=>{const x=lessonText();$('lo').value=x;s('hub_lo',x)};$('lp').onclick=async()=>{
   const x=aiPromptText();
   if(!x){alert(t('noPrompt'));return}
   try{await navigator.clipboard.writeText(x);$('lp').textContent=t('copied');setTimeout(()=>$('lp').textContent=t('aiPrompt'),1500)}
@@ -392,7 +456,57 @@ $('lcp').onclick=async()=>{
   catch(e){prompt('',x)}
 };
 
-// ---- ИИ-помощник (через Netlify Function) ----
+// ---- Todoist интеграция ----
+async function tdLoad(){
+  const tok=g('hub_tok');if(!tok)return;
+  $('tsetup').hidden=true;$('tview').hidden=false;$('tl').textContent=t('loading');
+  try{
+    const r=await fetch('https://api.todoist.com/rest/v2/tasks?filter=today',{headers:{Authorization:'Bearer '+tok}});
+    if(!r.ok)throw new Error();
+    const tasks=await r.json();
+    const box=$('tl');box.textContent='';
+    if(!tasks.length){$('tmsg').textContent=t('noTasks');return}$('tmsg').textContent='';
+    tasks.forEach(tsk=>{
+      const row=document.createElement('label');row.className='tk';
+      const cb=document.createElement('input');cb.type='checkbox';
+      cb.onchange=async()=>{
+        row.style.opacity='0.4';
+        await fetch(`https://api.todoist.com/rest/v2/tasks/${tsk.id}/close`,{method:'POST',headers:{Authorization:'Bearer '+tok}});
+        row.remove();if(!box.children.length)$('tmsg').textContent=t('noTasks');
+      };
+      const span=document.createElement('span');span.textContent=tsk.content;
+      row.append(cb,span);box.append(row);
+    });
+  }catch(e){$('tl').textContent='';$('tmsg').textContent=t('todoErr')}
+}
+$('tsave').onclick=()=>{s('hub_tok',$('tok').value.trim());tdLoad()};$('tref').onclick=tdLoad;
+$('tch').onclick={()=>{s('hub_tok','');$('tview').hidden=true;$('tsetup').hidden=false;$('tok').value=''}};
+if(g('hub_tok')){$('tok').value=g('hub_tok');tdLoad()}
+
+// ---- MacroDroid триггеры ----
+let mbtns=[];try{mbtns=JSON.parse(g('hub_mbtns'))||[{name:'Botu işlot',id:'bot_start'},{name:'Öçür',id:'bot_stop'}]}catch(e){}
+function renderMb(){
+  const box=$('mb');box.textContent='';
+  mbtns.forEach((b,idx)=>{
+    const btn=document.createElement('button');btn.className='b';btn.style.flex='1';btn.textContent=b.name;
+    btn.onclick=async()=>{
+      const dev=$('dev').value.trim();if(!dev){alert('Enjam ID ýazylmady!');return}
+      btn.textContent=t('loading');
+      try{await fetch(`https://trigger.macrodroid.com/${dev}/${b.id}`);btn.textContent=t('sent')}
+      catch(e){btn.textContent='Ýalňyşlyk'}
+      setTimeout(()=>btn.textContent=b.name,1500);
+    };
+    btn.oncontextmenu=e=>{e.preventDefault();if(confirm('Pozmak? '+b.name)){mbtns.splice(idx,1);s('hub_mbtns',JSON.stringify(mbtns));renderMb()}};
+    box.append(btn);
+  });
+}
+$('dev').value=g('hub_dev')||'';$('dev').oninput=e=>s('hub_dev',e.target.value);$('mad').onclick=()=>{
+  const name=prompt(t('btnName'));if(!name)return;
+  const id=prompt(t('btnId'));if(!id)return;
+  mbtns.push({name,id});s('hub_mbtns',JSON.stringify(mbtns));renderMb();
+};
+
+// ---- ИИ-помощник ----
 ['aip','aic','aiu','aiq','aia'].forEach(id=>{
   const e=$(id);
   e.value=g('hub_'+id)||(id==='aiu'&&/netlify\.app$/.test(location.hostname)?location.origin:'');
