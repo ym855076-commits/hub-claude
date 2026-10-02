@@ -215,8 +215,8 @@ const st=g('hub_theme');
 setTheme(st?st==='dark':matchMedia('(prefers-color-scheme: dark)').matches);
 $('thm').onclick=()=>{const d=!document.body.classList.contains('dark');setTheme(d);s('hub_theme',d?'dark':'light')};
 
-$('shift').value=g('hub_shift')||'';$('shift').oninput=e=>s('hub_shift',e.target.value);
-$('nt').value=g('hub_notes')||'';$('nt').oninput=e=>s('hub_notes',e.target.value);
+$('shift').value=g('hub_shift')\vert{}\vert{}'';$('shift').oninput=e=>s('hub_shift',e.target.value);
+$('nt').value=g('hub_notes')\vert{}\vert{}'';$('nt').oninput=e=>s('hub_notes',e.target.value);
 
 $('ex').onclick=()=>{
   const a=document.createElement('a');
@@ -329,7 +329,7 @@ $('lt').oninput=e=>{s('hub_lt',e.target.value)};$('lt').onchange=e=>{
 let lessonDayOffset=0;
 $('ldatePlus1').onclick=()=>{
   lessonDayOffset=lessonDayOffset===0?1:0;
-  $('ldatePlus1.style')$('ldatePlus1').textContent=lessonDayOffset===1?'📅 Ertir üçin (+1 gün)':'📅 +1 gün (Завтра)';
+  $('ldatePlus1').textContent=lessonDayOffset===1?'📅 Ertir üçin (+1 gün)':'📅 +1 gün (Завтра)';
   $('lo').value=lessonText();
 };
 
