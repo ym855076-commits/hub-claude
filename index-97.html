@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yusup Hub</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1f6b4a">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f3f1ec;--card:#fffdf9;--tx:#2b2b28;--sub:#6b6a64;--bd:#ded9cf;--g:#1f6b4a}
+body.dark{--bg:#14171a;--card:#1c2024;--tx:#e6e4de;--sub:#a3a199;--bd:#2f353b;--g:#5fbf93}
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);margin:0;padding:14px;line-height:1.45}
+.c{max-width:500px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--bd);border-left:4px solid var(--a,#1976d2);border-radius:12px;padding:16px;margin-bottom:14px}
+.card h3{margin:0 0 4px;font-size:16px;color:var(--a)}
+.sub{font-size:12px;color:var(--sub);margin:0 0 10px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}
+.top h1{font-size:19px;margin:0}
+.top button,.b{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.top button.on{background:var(--g);color:#fff;border-color:var(--g)}
+.b.p{background:var(--a);color:#fff;border-color:var(--a)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+input,textarea{width:100%;background:transparent;color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:9px;font:inherit;font-size:14px}
+textarea{height:80px;resize:vertical}
+.big{font-size:38px;font-weight:700;text-align:center;color:var(--a);margin:4px 0 10px;font-variant-numeric:tabular-nums}
+.ar{font-family:"Amiri","Traditional Arabic","Scheherazade New",serif;font-size:26px;line-height:2;text-align:right;direction:rtl;color:var(--g);margin:0 0 8px}
+.pt{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pt div{border:1px solid var(--bd);border-radius:8px;padding:6px;text-align:center;font-size:12px;color:var(--sub)}
+.pt b{display:block;font-size:16px;color:var(--tx)}
+.pt .nx{border-color:var(--a);background:rgba(31,107,74,.1)}
+a.l{color:var(--a);font-size:13px;font-weight:600;padding:6px 10px;border:1px solid var(--bd);border-radius:8px;text-decoration:none}
+.note{font-size:12px;color:var(--sub);margin:8px 0 0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.bm{text-align:center;font-family:"Amiri","Traditional Arabic",serif;font-size:22px;color:var(--g);border:1px solid var(--bd);background:var(--card);border-radius:12px;padding:10px;margin-bottom:14px}
+[hidden]{display:none!important}
+input[type=checkbox]{width:22px;height:22px;flex:none;margin:0}
+.tk .b{padding:4px 9px}
+.row input{min-width:0}
+.tk{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--bd);font-size:14px}
+select{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:9px;font:inherit;font-size:14px;width:100%}
+:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.card h3{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:17px;padding:2px 0}
+.card h3::after{content:"\25BE";color:var(--sub);font-size:14px;transition:transform .2s}
+.card.fold h3::after{transform:rotate(-90deg)}
+.card.fold>*:not(h3){display:none}
+.card{scroll-margin-top:64px;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.05);animation:cin .4s ease both}
+.b,.top button{min-height:44px;border-radius:12px;transition:transform .12s,background-color .2s}
+.b:active,.top button:active{transform:scale(.96)}
+input:not([type=checkbox]),select{min-height:44px}
+textarea{min-height:64px}
+input,textarea,select{font-size:16px}
+.tk .b{min-height:36px}
+.nv{position:sticky;top:0;z-index:5;display:flex;gap:8px;overflow-x:auto;padding:8px 0;margin:0 0 8px;background:var(--bg);scrollbar-width:none}
+.nv::-webkit-scrollbar{display:none}
+.nv .b{flex:none;padding:6px 14px}
+@keyframes cin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* ---- Дизайн 2.0 ---- */
+body{transition:background-color .3s,color .3s;padding:14px 14px 48px}
+.c{max-width:560px}
+.top{display:block;background:linear-gradient(135deg,#1f6b4a,#154a34);color:#fff;border-radius:24px;padding:20px 16px 16px;margin-bottom:10px;box-shadow:0 14px 28px -18px rgba(0,0,0,.5)}
+body.dark .top{background:linear-gradient(135deg,#1f3d33,#152a2c)}
+.top h1{font-size:28px;font-weight:800;letter-spacing:-.02em;margin:0 0 16px;line-height:1.15}
+.ctl{display:flex;gap:10px}
+.seg{display:flex;flex:1;gap:2px;padding:3px;border-radius:14px;background:rgba(255,255,255,.16)}
+.seg button{flex:1;min-height:40px;padding:0 8px;border:0;border-radius:11px;background:transparent;color:#fff;font-size:14px;font-weight:700;transition:background-color .25s,color .25s,transform .12s}
+.seg button.on{background:#fff;color:#1f6b4a;border:0;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.nv{padding:10px 0;margin:0 0 6px}
+.nv .b{min-height:38px;padding:0 16px;border-radius:19px;font-size:14px}
+.bm{border-radius:20px;font-size:26px;padding:14px;background:linear-gradient(135deg,var(--card),color-mix(in srgb,var(--g) 9%,var(--card)))}
+.card{border-radius:20px;padding:18px;box-shadow:0 10px 24px -18px rgba(0,0,0,.45);transition:background-color .3s,border-color .3s}
+body.dark .card{box-shadow:none}
+.card h3{font-size:18px;font-weight:750;letter-spacing:-.01em;margin-bottom:6px}
+.sub,.note{line-height:1.4}
+.b{font-weight:650}
+.b.p{box-shadow:0 8px 16px -10px var(--a,var(--g))}
+input:not([type=checkbox]),textarea,select{border-radius:12px;background:color-mix(in srgb,var(--bd) 22%,var(--card));transition:border-color .2s,box-shadow .2s}
+input:not([type=checkbox]):focus,textarea:focus,select:focus{outline:none;border-color:var(--a,var(--g));box-shadow:0 0 0 3px color-mix(in srgb,var(--a,var(--g)) 25%,transparent)}
+input[type=checkbox]{accent-color:var(--a,var(--g))}
+a.l{border-radius:12px;padding:0 14px;min-height:44px;display:inline-flex;align-items:center}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="top">
+  <h1 id="hello"></h1>
+  <div class="ctl">
+    <div class="seg" role="group" aria-label="Theme"><button id="thl" data-i="thLight"></button><button id="thd" data-i="thDark"></button></div>
+    <div class="seg" role="group" aria-label="Language"><button id="bru" data-l="ru">RU</button><button id="btk" data-l="tk">TK</button></div>
+  </div>
+</div>
+
+<nav class="nv" id="nv">
+  <button class="b" data-go="c-day" data-i="navDay"></button>
+  <button class="b" data-go="c-read" data-i="navRead"></button>
+  <button class="b" data-go="c-focus" data-i="navFocus"></button>
+  <button class="b" data-go="c-garden" data-i="navIdeas"></button>
+  <button class="b" data-go="c-plan" data-i="navPlan"></button>
+  <button class="b" data-go="c-ai" data-i="navAI"></button>
+  <button class="b" id="zm" aria-label="Text size">Аа</button>
+</nav>
+
+<div class="bm">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+
+<div class="card" id="c-day" style="--a:#d9480f">
+  <h3 data-i="day"></h3>
+  <p class="sub" id="dsub"></p>
+  <p id="dmain" style="margin:0 0 6px;font-weight:600"></p>
+  <div id="dls"></div>
+  <div class="row" style="margin-top:8px"><input id="dn" data-p="dayPh" style="flex:1"><button class="b p" id="dadd" data-i="dayAdd"></button></div>
+  <p class="note" id="dprog"></p>
+</div>
+
+<div class="card" style="--a:#1f6b4a">
+  <h3 data-i="quran"></h3>
+  <p class="sub" id="ref"></p>
+  <p class="ar" id="ar"></p>
+  <p id="tr" style="margin:0 0 10px"></p>
+  <textarea id="an" data-p="ayPh" style="height:60px"></textarea>
+  <div class="row" style="margin-top:8px">
+    <button class="b p" id="nx" data-i="next"></button>
+    <a class="l" id="tf" target="_blank" rel="noopener" data-i="tafsir"></a>
+  </div>
+  <p class="note" data-i="qnote"></p>
+</div>
+
+<div class="card" id="c-read" style="--a:#5d4037">
+  <h3 data-i="read"></h3>
+  <div class="row" style="margin:8px 0"><select id="rb" style="flex:1;min-width:0"></select><button class="b p" id="rg" data-i="rGo"></button></div>
+  <div class="row" style="margin-bottom:8px"><button class="b" id="rp" data-i="rPrev"></button><button class="b" id="rn" data-i="rNext"></button><a class="l" id="rl" target="_blank" rel="noopener" data-i="rOpen"></a></div>
+  <p class="sub" id="rref"></p>
+  <p class="note" id="rhint" data-i="rHint"></p>
+  <div id="rbody" style="max-height:420px;overflow:auto"></div>
+  <p class="note" id="rsrc"></p>
+  <p class="note" data-i="rNote"></p>
+</div>
+
+<div class="card" style="--a:#ad1457">
+  <h3 data-i="tip"></h3>
+  <p id="tipx" style="margin:0 0 10px;font-size:16px"></p>
+  <div class="row"><button class="b p" id="tnx" data-i="tipNext"></button><button class="b" id="tsv" data-i="tipSave"></button></div>
+</div>
+
+<div class="card" style="--a:#1976d2">
+  <h3 data-i="task"></h3>
+  <input id="shift" data-p="taskPh">
+</div>
+
+<div class="card" id="c-focus" style="--a:#00796b">
+  <h3 data-i="focus"></h3>
+  <p class="sub" id="fmode"></p>
+  <div class="big" id="ft">25:00</div>
+  <div class="row"><button class="b p" id="fb" style="flex:1"></button></div>
+</div>
+
+<div class="card" id="c-plan" style="--a:#b45309">
+  <h3 data-i="lesson"></h3>
+  <div class="g2"><select id="ls"></select><input id="lc" data-p="ltime"></div>
+  <div id="fe"><input id="lt" data-p="ltopic" style="margin-bottom:8px">
+  <div class="g2"><input id="lg" data-p="lgoal"><input id="lm" data-p="lequip"></div></div>
+  <div id="pf" hidden></div>
+  <textarea id="lo" data-p="lph" style="height:240px;margin-bottom:8px"></textarea>
+  <div class="row"><button class="b p" id="lb" data-i="build"></button><button class="b" id="lp" data-i="aiPrompt"></button><button class="b" id="lx" data-i="exp"></button><button class="b" id="lcp" data-i="copyBtn"></button></div>
+</div>
+
+<div class="card" style="--a:#7b5ea7">
+  <h3 data-i="notes"></h3>
+  <textarea id="nt" data-p="notePh"></textarea>
+  <div class="row" style="margin-top:8px">
+    <button class="b" id="ex" data-i="exp"></button>
+    <button class="b" id="im" data-i="imp"></button>
+    <input type="file" id="fi" accept=".txt,text/plain" hidden>
+  </div>
+</div>
+
+<div class="card" style="--a:#6a1b9a">
+  <h3 data-i="cl"></h3>
+  <p class="sub" data-i="clSub"></p>
+  <p id="clx" style="margin:0 0 10px;font-size:16px"></p>
+  <div class="row"><button class="b p" id="cnx" data-i="clNext"></button><button class="b" id="csv" data-i="tipSave"></button><button class="b" id="cai" data-i="clAsk"></button></div>
+</div>
+
+<div class="card" id="c-garden" style="--a:#3d8b40">
+  <h3 data-i="garden"></h3>
+  <p class="sub" data-i="gardenSub"></p>
+  <textarea id="gi" data-p="gardenPh" style="height:64px"></textarea>
+  <input id="gtg" data-p="gardenTags" style="margin-top:8px">
+  <div class="row" style="margin:8px 0"><button class="b p" id="ga" data-i="gardenAdd"></button></div>
+  <input id="gs" data-p="gardenSearch">
+  <div class="row" id="gtags" style="margin:8px 0"></div>
+  <div id="gl"></div>
+  <p class="note" id="gcnt"></p>
+</div>
+
+<div class="card" style="--a:#6d4c41">
+  <h3 data-i="chest"></h3>
+  <p class="sub" data-i="chestSub"></p>
+  <div class="row">
+    <button class="b p" id="bk" data-i="bkSave"></button>
+    <button class="b" id="rs" data-i="bkLoad"></button>
+    <input type="file" id="rf" accept=".json,application/json" hidden>
+  </div>
+</div>
+
+<div class="card" id="c-ai" style="--a:#00838f">
+  <h3 data-i="ai"></h3>
+  <div class="g2"><select id="aip"><option value="claude">Claude</option><option value="gemini">Gemini</option></select><input id="aic" type="password" data-p="aiCode" autocomplete="off"></div>
+  <input id="aiu" data-p="aiUrl" style="margin-bottom:8px">
+  <textarea id="aiq" data-p="aiQ" style="height:70px;margin-bottom:8px"></textarea>
+  <div class="row"><button class="b p" id="aib" data-i="ask"></button></div>
+  <textarea id="aia" data-p="aiA" style="height:160px;margin-top:8px"></textarea>
+</div>
+
+<div class="card" id="c-week" style="--a:#00897b">
+  <h3 data-i="week"></h3>
+  <p class="sub" data-i="weekSub"></p>
+  <div id="wk" style="display:flex;gap:6px;align-items:flex-end"></div>
+  <p class="note" id="wkt"></p>
+</div>
+
+<div class="card" id="c-sites" style="--a:#2e7d32">
+  <h3 data-i="sites"></h3>
+  <div class="row" id="sl"></div>
+  <div class="row" style="margin-top:10px"><button class="b" id="sed" data-i="siteEdit"></button></div>
+  <div id="sadd" hidden style="margin-top:8px">
+    <input id="sn" data-p="siteName">
+    <input id="su" data-p="siteUrl" inputmode="url" style="margin-top:8px">
+    <button class="b p" id="sok" data-i="siteAdd" style="margin-top:8px"></button>
+  </div>
+</div>
+
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const g=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const s=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+
+// ---- Настройки ----
+const LAT=39.0733, LON=63.5786, TZ='Asia/Ashgabat';
+const METHOD=13, SCHOOL=1; // 13 = Diyanet, SCHOOL 1 = ханафитский аср. Сверь со своей таблицей!
+const WORK=25*60, REST=5*60;
+const AYAT=['65:3','94:6','2:152','13:28','2:286','3:139','39:53'];
+
+const T={
+ru:{hello:'Привет, Юсуп!',prayer:'🕌 Время намаза',pnote:'Расчёт по методу из настроек кода. Сверяй с местной таблицей.',
+task:'📌 Главная задача',taskPh:'Например: утренняя смена, дописать бота',
+focus:'⏱️ Фокус',work:'Работа 25 минут',rest:'Перерыв 5 минут',start:'Начать',stop:'Остановить',
+done:'Время вышло!',quran:'📖 Аят дня',next:'Другой аят',tafsir:'Тафсир ↗',ayPh:'Мои мысли об аяте (только для тебя)…',
+qnote:'Текст и перевод (Кулиев) загружаются из открытой базы. Толкование смотри у богословов, не у ИИ.',
+links:'🚀 Мои ссылки',addLink:'+ Добавить ссылку',day:'🌤️ Мой день',dayPh:'Добавить дело…',dayAdd:'+',dayNext:'Следующий намаз',dayDone:'Сделано',dayEmpty:'Список на сегодня пуст. Незаконченные дела переходят на следующий день.',garden:'🦉 Мудрые идеи',gardenSub:'Записывай идеи, ставь метки через пробел, ищи по слову или метке.',gardenPh:'Новая идея…',gardenTags:'Метки: ролики школа сайты',gardenAdd:'Сохранить идею',gardenSearch:'Поиск по идеям…',gardenCnt:'Показано',gardenDel:'Удалить идею?',chest:'🧰 Сундучок',chestSub:'Копия всех заметок, идей и настроек одним файлом. Код доступа ИИ в копию не входит.',bkSave:'📥 Скачать копию',bkLoad:'📤 Загрузить копию',bkAsk:'Заменить данные на этом телефоне данными из копии?',bkBad:'Это не файл копии Hub.',
+tip:'💡 Совет дня',tipNext:'Другой совет',tipSave:'Сохранить',tipSaved:'Сохранено ✓',tips:["Начни с самого маленького шага: пять минут работы лучше, чем час откладывания.", "Перед резким словом сделай вдох. Сказанное слово не вернуть.", "Запиши три главных дела на день и сделай первым самое трудное.", "Учишь новое? Объясни это вслух, как будто учишь другого.", "Когда нужно сосредоточиться, убери телефон подальше: это проще, чем бороться с желанием.", "Перед важным решением спроси себя: «Что бы я посоветовал другу?»", "Хвали за старание, а не только за результат: так перестают бояться ошибок.", "Закончил работу? Запиши, с чего начнёшь завтра. Утром не придётся вспоминать.", "Не сравнивай свой первый шаг с чужим сотым.", "Делай перерыв каждые 25-30 минут: глаза и спина скажут спасибо.", "Добрые слова ничего не стоят, но помнятся долго. Скажи сегодня одно кому-нибудь.", "Храни копию важных файлов в двух местах: она спасёт в день, когда телефон сломается.", "Ошибка не значит, что ты плохой. Она значит, что ты пробуешь.", "Сначала пойми, потом заучивай: понятое запоминается быстрее."],
+cl:'🤖 Идея от Claude',clSub:'Новая идея каждый день. Сохрани её или попроси ещё у ИИ-помощника.',clNext:'Другая идея',clAsk:'Спросить ИИ',clPrompt:'Дай мне 5 свежих идей для коротких видео и сайтов для местного бизнеса. Коротко, по одной строке.',ideas:["Сними ролик «до и после» сайта для местного кафе: старая страница и новая.", "Покажи за 30 секунд один лайфхак для телефона, который знают не все.", "Сделай серию «Ошибка начинающего»: одна ошибка в сайте и как её исправить.", "Расскажи в ролике, как ты за день собрал небольшой сайт с телефона.", "Сними короткий ответ на вопрос подписчика и начни ролик с этого вопроса.", "Сделай подборку «3 бесплатных инструмента для создания сайта».", "Покажи закулисье: как выглядит твой рабочий день с телефоном.", "Сними ролик «Сколько стоит сайт для магазина» и объясни, из чего складывается цена.", "Выложи мини-урок на 20 секунд: что такое домен и зачем он нужен.", "Спроси подписчиков, какой сайт им нужен, и сделай ролик по самому частому ответу.", "Сделай для местного бизнеса страницу-визитку с кнопкой «Позвонить» и картой.", "Придумай мини-игру для школьного праздника: викторина на 10 вопросов с таймером.", "Собери страницу-прайс для мастера: услуги, цены и кнопка в мессенджер.", "Сделай простой калькулятор для клиента, например расчёт стоимости заказа.", "Сделай для школы страницу «Расписание звонков» с текущим и следующим уроком.", "Сделай трекер привычек на одной странице: отметки по дням и серия.", "Придумай страницу «Отзывы» с красивыми карточками для своего портфолио.", "Добавь в портфолио короткий пример работы: задача, решение, результат с цифрами.", "Проведи пятиминутную игру на внимание в начале занятия.", "Попроси детей самих придумать правила класса и записать их вместе.", "Раз в неделю устрой «минуту благодарности»: каждый называет одно доброе дело.", "Сделай карточки со словами по теме недели и поиграйте в «найди пару».", "Придумай мини-викторину по пройденной теме и дай детям составить вопросы.", "Покажи детям, как проверить новость: кто написал, где источник и когда.", "Организуй «читальный уголок» с короткими книгами и отзывами детей.", "Выбери один день в неделю без бесконечных сообщений и посвяти его глубокой работе.", "Каждый вечер записывай три хороших события дня.", "Составь список из пяти проектов и выбери один, который доведёшь до конца.", "Раз в неделю делай копию своих сайтов и заметок в Сундучке.", "Назначь себе час без экрана перед сном и запиши, что стало лучше."],
+navDay:'День',navPray:'Намаз',navFocus:'Фокус',navIdeas:'Идеи',navPlan:'План',navAI:'ИИ',
+week:'📊 Итоги недели',weekSub:'Сколько дел вы отметили выполненными за последние 7 дней.',weekTotal:'Всего',weekBest:'Лучший день',weekEmpty:'Пока пусто. Отмечайте дела в «Моём дне».',wd:['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+read:'📚 Чтение Корана',rGo:'Читать',rPrev:'← Назад',rNext:'Вперёд →',rOpen:'Открыть на сайте',rSura:'Сура',rSrcQ:'Текст и перевод (Кулиев): alquran.cloud',rErr:'Не удалось загрузить. Проверьте интернет или откройте на сайте.',rHint:'Выберите суру и нажмите «Читать».',rNote:'Толкование смотри у знающих людей, не у ИИ.',
+navRead:'Чтение',
+siteEdit:'✎ Изменить',siteDone:'Готово',siteName:'Название',siteUrl:'Ссылка (https://…)',siteAdd:'Добавить сайт',siteDel:'Удалить ссылку?',
+thLight:'Светлая',thDark:'Тёмная',
+notes:'📓 Заметки',notePh:'Записать идею…',exp:'📥 Скачать .txt',imp:'📤 Загрузить',
+lesson:'📝 План и режим дня',kinds:['Хозяйственный труд','Домашние задания','Внеклассное чтение','Культурный отдых','Другое'],ltime:'Время (например 16:00)',ltopic:'Тема',lgoal:'Цель',lequip:'Оборудование',build:'Собрать',aiPrompt:'Промпт для ИИ',copied:'Скопировано ✓',lph:'Здесь появится план. Его можно править.',
+steps:['Вводная беседа','Вопросы','Основная часть','Закрепление','Итог'],lgoalL:'Цель',lequipL:'Оборудование',lcourse:'Ход',checked:'Проверено',noPrompt:'Для режима дня промпт не нужен.',copyBtn:'Копировать',days:['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'],yr:'г.,',
+pin:'Составь план мероприятия воспитателя в школе-интернате для детей с нарушением слуха.',pout:'Пиши короткими простыми предложениями, опирайся на наглядность и вопросы-ответы (например: «Sen näme etdiň? — Men okadym, ýazdym.»). Язык плана: туркменский. После плана дай перевод на русский для проверки.',
+sites:'🌐 Мои сайты',
+ai:'✨ ИИ-помощник',aiCode:'Код доступа',aiUrl:'Адрес сайта на Netlify (https://…netlify.app)',aiQ:'Вопрос или задание для ИИ…',aiA:'Ответ ИИ появится здесь',ask:'Спросить',aiLesson:'✨ ИИ',aiSetup:'Укажи адрес сайта и код доступа.',aiErr:'Ошибка ИИ:',
+loading:'Загрузка…',offline:'Нет сети и нет сохранённой копии.',next_:'След.',linkName:'Название ссылки',linkUrl:'Адрес (https://…)',
+names:['Фаджр','Восход','Зухр','Аср','Магриб','Иша']},
+tk:{hello:'Salam, Ýusup!',prayer:'🕌 Namaz wagtlary',pnote:'Hasaplama koddaky usul boýunça. Ýerli tablisa bilen deňeşdiriň.',
+task:'📌 Esasy iş',taskPh:'Meselem: irden çalşyk, bot ýazmak',
+focus:'⏱️ Üns',work:'Iş 25 minut',rest:'Arakesme 5 minut',start:'Başla',stop:'Bes et',
+done:'Wagt gutardy!',quran:'📖 Günüň aýaty',next:'Başga aýat',tafsir:'Tefsir ↗',ayPh:'Aýat barada pikirlerim (diňe özüm üçin)…',
+qnote:'Aýat we terjime (rusça, Kuliýew) açyk bazadan ýüklenýär. Düşündirişi alymlardan alyň.',
+links:'🚀 Baglanyşyklarym',addLink:'+ Baglanyşyk goş',day:'🌤️ Günüm',dayPh:'Iş goş…',dayAdd:'+',dayNext:'Indiki namaz',dayDone:'Edildi',dayEmpty:'Şu günki sanaw boş. Gutarylmadyk işler ertesi güne geçýär.',garden:'🦉 Paýhasly pikirler',gardenSub:'Pikirleri ýaz, bellikleri boşluk bilen aýyr, sözi ýa-da belligi boýunça gözle.',gardenPh:'Täze pikir…',gardenTags:'Bellikler: wideo mekdep sahypa',gardenAdd:'Pikiri saklamak',gardenSearch:'Pikirlerden gözle…',gardenCnt:'Görkezilen',gardenDel:'Pikir pozulsynmy?',chest:'🧰 Sandyk',chestSub:'Ähli bellikleriň, pikirleriň we sazlamalaryň nusgasy bir faýlda. AI giriş koduny nusga girmeýär.',bkSave:'📥 Nusga almak',bkLoad:'📤 Nusgany dikeltmek',bkAsk:'Bu telefondaky maglumatlar nusgadaky maglumatlar bilen çalşylsynmy?',bkBad:'Bu Hub nusgasynyň faýly däl.',
+tip:'💡 Günüň maslahaty',tipNext:'Başga maslahat',tipSave:'Sakla',tipSaved:'Saklandy ✓',tips:["Iň kiçi ädimden başla: bäş minut iş, bir sagat yza süýşürmekden gowy.", "Ýiti söz aýtmazdan öň bir dem al. Aýdylan sözi yzyna gaýtaryp bolmaýar.", "Gün üçin üç esasy işi ýaz we ilki iň kynyny et.", "Täze zat öwrenýärsiňmi? Ony başga birine öwredýän ýaly ses çykaryp düşündir.", "Üns bermeli wagtyň telefony daşa goý: ol arzuw bilen göreşmekden aňsat.", "Möhüm karardan öň özüňden sora: «Dostuma näme maslahat bererdim?»", "Diňe netije üçin däl, tagallasy üçin hem öw: şonda ýalňyşmakdan gorkmaýarlar.", "Işi gutardyňmy? Ertir nämeden başlajakdygyňy ýaz. Daň säher ýatlamaly bolmaz.", "Öz ilkinji ädimiňi başgalaryň ýüzünji ädimi bilen deňeşdirme.", "Her 25-30 minutdan dynç al: gözleriň we arkaň sag bolsun diýer.", "Mähirli sözler hiç zada durmaýar, ýöne uzak ýatda galýar. Şu gün birine bir söz aýt.", "Möhüm faýllaryň nusgasyny iki ýerde sakla: telefon döwülen güni halas eder.", "Ýalňyşlyk erbetdigiňi däl, synanyşýandygyňy aňladýar.", "Ilki düş, soň ýatda sakla: düşünilen zat çalt ýatda galýar."],
+cl:'🤖 Claude-yň pikiri',clSub:'Her gün täze pikir. Ony sakla ýa-da AI kömekçiden ýene sora.',clNext:'Başga pikir',clAsk:'AI-dan sora',clPrompt:'Maňa gysga wideolar we ýerli iş üçin saýtlar barada 5 täze pikir ber. Gysgaça, her biri bir setirde.',ideas:["Ýerli kafe üçin saýtyň «öň we soň» wideosyny düşür: könelen we täze sahypa.", "30 sekuntda köpleriň bilmeýän bir telefon lifhagyny görkez.", "«Başlaýanyň ýalňyşlygy» seriýasyny et: saýtdaky bir ýalňyşlyk we ony nädip düzetmeli.", "Wideoda telefondan bir günde kiçi saýty nädip ýasanyňy aýt.", "Ýazylyjynyň soragyna gysga jogap düşür we wideony şol sorag bilen başla.", "«Saýt döretmek üçin 3 mugt gural» saýlamasyny et.", "Işiň perdesiniň aňyrsyny görkez: telefon bilen iş günüň nähili geçýär.", "«Dükan üçin saýt näçe durýar» wideosyny düşür we bahanyň nämeden ybaratdygyny düşündir.", "20 sekuntlyk mini-sapak goý: domen näme we näme üçin gerek.", "Ýazylyjylardan haýsy saýt gerekdigini sora we iň köp aýdylan jogap boýunça wideo et.", "Ýerli iş üçin «Jaň et» düwmesi we kartasy bolan wizit sahypasyny ýasa.", "Mekdep baýramy üçin mini-oýun oýlap tap: 10 soraglyk wiktorina we sagat.", "Ussa üçin baha sahypasyny ýygna: hyzmatlar, bahalar we habarlaşyjy düwmesi.", "Müşderi üçin ýönekeý kalkulýator ýasa, meselem, sargydyň bahasyny hasaplamak.", "Mekdep üçin häzirki we indiki sapagy görkezýän «Jaň tertibi» sahypasyny ýasa.", "Bir sahypada endik yzarlaýjyny ýasa: günler boýunça bellikler we yzygiderlilik.", "Portfolioň üçin owadan kartoçkaly «Syn» sahypasyny oýlap tap.", "Portfolioňa gysga iş mysalyny goş: mesele, çözgüt, sanly netije.", "Sapagyň başynda bäş minutlyk üns oýnuny geçir.", "Çagalardan synp kadalaryny özleriniň oýlap tapmagyny we bilelikde ýazmagyny sora.", "Hepdede bir gezek «minnetdarlyk minudyny» geçir: her kim bir ýagşy işi aýdýar.", "Hepdäniň temasy boýunça sözli kartoçkalar ýasa we «jübüt tap» oýnuny oýnaň.", "Geçilen tema boýunça mini-wiktorina oýlap tap we soraglary çagalara düzdür.", "Çagalara habaryň dogrudygyny barlamagy görkez: kim ýazdy, çeşme nirede, haçan.", "Gysga kitaplar we çagalaryň synlary bilen «okaýyş burçuny» gurna.", "Hepdede bir günüňi tükeniksiz habarlarsyz geçir we çuňňur işe sarp et.", "Her agşam günüň üç gowy wakasyny ýaz.", "Bäş taslamanyň sanawyny düz we ahyryna çenli ýetirjek birini saýla.", "Hepdede bir gezek saýtlaryňyň we bellikleriňiň nusgasyny Sandykda sakla.", "Ýatmazdan öň bir sagat ekransyz wagt belle we näme gowulaşandygyny ýaz."],
+navDay:'Gün',navPray:'Namaz',navFocus:'Fokus',navIdeas:'Pikirler',navPlan:'Meýilnama',navAI:'AI',
+week:'📊 Hepdäniň netijesi',weekSub:'Soňky 7 günde näçe iş edildi diýip bellendi.',weekTotal:'Jemi',weekBest:'Iň gowy gün',weekEmpty:'Heniz boş. «Günüm» kartasynda işleri belläň.',wd:['Ýek','Duş','Siş','Çar','Pen','Ann','Şen'],
+read:'📚 Gurhan okamak',rGo:'Aç',rPrev:'← Yza',rNext:'Öňe →',rOpen:'Saýtda aç',rSura:'Sure',rSrcQ:'Tekst we terjime (Kuliýew): alquran.cloud',rErr:'Ýüklenmedi. Interneti barlaň ýa-da saýtda açyň.',rHint:'Sureni saýlaň we «Aç» basyň.',rNote:'Düşündirişi bilýän adamlardan sora, AI-dan däl.',
+navRead:'Okamak',
+siteEdit:'✎ Üýtget',siteDone:'Taýýar',siteName:'Ady',siteUrl:'Ssylka (https://…)',siteAdd:'Sahypa goş',siteDel:'Ssylka pozulsynmy?',
+thLight:'Ýagty',thDark:'Garaňky',
+notes:'📓 Bellikler',notePh:'Pikir ýazyň…',exp:'📥 .txt ýükle',imp:'📤 Faýl aç',
+lesson:'📝 Meýilnama we gün tertibi',kinds:['Hojalyk zähmet','Öý berlen işi ýerine ýetirmek','Synpdan daşary okuw','Medeni dynç alyş','Başga'],ltime:'Wagty (meselem 16:00)',ltopic:'Tema',lgoal:'Maksady',lequip:'Esbaby',build:'Düz',aiPrompt:'AI üçin prompt',copied:'Göçürildi ✓',lph:'Meýilnama şu ýerde peýda bolar. Redaktirläp bolýar.',
+steps:['Giriş','Soraglar','Esasy bölüm','Berkitmek','Jemi'],lgoalL:'Maksady',lequipL:'Esbaby',lcourse:'Gidişi',checked:'Barlandy',noPrompt:'Gün tertibi üçin prompt gerek däl.',copyBtn:'Göçür',days:['Ýekşenbe','Duşenbe','Sişenbe','Çarşenbe','Penşenbe','Anna','Şenbe'],yr:'ý.',
+pin:'Eşitmeýän çagalar üçin internat mekdebinde terbiýeçiniň çäresiniň meýilnamasyny düz.',pout:'Gysga, ýönekeý sözlemler ulan, görkezmelilige we sorag-jogap görnüşine daýan (meselem: «Sen näme etdiň? — Men okadym, ýazdym.»). Meýilnamany türkmen dilinde ýaz. Soňundan barlamak üçin rusça terjimesini ber.',
+sites:'🌐 Meniň saýtlarym',
+ai:'✨ AI kömekçi',aiCode:'Elýeterlilik kody',aiUrl:'Netlify saýtyň salgysy (https://…netlify.app)',aiQ:'AI üçin sorag ýa-da tabşyryk…',aiA:'AI jogaby şu ýerde peýda bolar',ask:'Sora',aiLesson:'✨ AI',aiSetup:'Saýtyň salgysyny we kody giriziň.',aiErr:'AI ýalňyşlygy:',
+loading:'Ýüklenýär…',offline:'Ulgam ýok we saklanan nusga ýok.',next_:'Indiki',linkName:'Baglanyşygyň ady',linkUrl:'Salgy (https://…)',
+names:['Daň','Gün','Öýle','Ikindi','Agşam','Ýatsy']}
+};
+let lang=g('hub_lang')||'ru', ai=0;
+const t=k=>T[lang][k];
+
+function applyLang(){
+  document.documentElement.lang=lang==='tk'?'tk':'ru';
+  $('hello').textContent=t('hello');
+  document.querySelectorAll('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
+  document.querySelectorAll('[data-p]').forEach(e=>e.placeholder=t(e.dataset.p));
+  $('bru').classList.toggle('on',lang==='ru');$('btk').classList.toggle('on',lang==='tk');
+  renderTimer();fillKinds();renderDay();renderGarden();renderTip();renderIdea();rfill();renderSites();
+}
+document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{lang=b.dataset.l;s('hub_lang',lang);applyLang()});
+
+// ---- Тема ----
+function setTheme(d){document.body.classList.toggle('dark',d);$('thl').classList.toggle('on',!d);$('thd').classList.toggle('on',d)}
+const st=g('hub_theme');
+setTheme(st?st==='dark':matchMedia('(prefers-color-scheme: dark)').matches);
+$('thl').onclick=()=>{setTheme(false);s('hub_theme','light')};
+$('thd').onclick=()=>{setTheme(true);s('hub_theme','dark')};
+
+// ---- Поля ----
+$('shift').value=g('hub_shift')||'';$('shift').oninput=e=>s('hub_shift',e.target.value);
+$('nt').value=g('hub_notes')||'';$('nt').oninput=e=>s('hub_notes',e.target.value);
+
+// ---- Заметки: экспорт/импорт ----
+$('ex').onclick=()=>{
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([$('nt').value],{type:'text/plain;charset=utf-8'}));
+  a.download='yusup-notes.txt';document.body.appendChild(a);a.click();a.remove();
+};
+$('im').onclick=()=>$('fi').click();
+$('fi').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  f.text().then(x=>{$('nt').value=x;s('hub_notes',x)});e.target.value='';
+};
+
+// ---- Таймер (Pomodoro 25/5, переживает перезагрузку) ----
+let ts=null; // {mode:'work'|'rest', end:ms}
+try{ts=JSON.parse(g('hub_timer'))}catch(e){}
+let iv=null;
+const pad=n=>String(n).padStart(2,'0');
+function renderTimer(){
+  const mode=ts?ts.mode:'work';
+  $('fmode').textContent=t(mode);
+  $('fb').textContent=ts?t('stop'):t('start');
+  const rem=ts?Math.max(0,Math.ceil((ts.end-Date.now())/1000)):WORK;
+  $('ft').textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);
+}
+function tick(){
+  if(ts&&Date.now()>=ts.end){
+    const was=ts.mode;
+    if(navigator.vibrate)navigator.vibrate([300,120,300]);
+    ts={mode:was==='work'?'rest':'work',end:Date.now()+(was==='work'?REST:WORK)*1000};
+    s('hub_timer',JSON.stringify(ts));
+    $('fmode').textContent=t('done');
+  }
+  renderTimer();
+}
+function runTimer(){clearInterval(iv);iv=setInterval(tick,500)}
+$('fb').onclick=()=>{
+  if(ts){ts=null;s('hub_timer','null');clearInterval(iv)}
+  else{ts={mode:'work',end:Date.now()+WORK*1000};s('hub_timer',JSON.stringify(ts));runTimer()}
+  renderTimer();
+};
+if(ts)runTimer();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
+
+function dateKey(){const d=new Date();return pad(d.getDate())+'-'+pad(d.getMonth()+1)+'-'+d.getFullYear()}
+
+// ---- Аят дня (текст и перевод из alquran.cloud, кэш) ----
+function ayIndex(){
+  const day=Math.floor(Date.now()/86400000);
+  return (day+ai)%AYAT.length;
+}
+async function loadAyah(){
+  const ref=AYAT[ayIndex()],[sura,num]=ref.split(':');
+  $('ref').textContent=`${sura}:${num}`;
+  $('tf').href=`https://quran.com/${sura}:${num}/tafsirs`;
+  $('an').value=g('hub_an_'+ref)||'';$('an').oninput=e=>s('hub_an_'+ref,e.target.value);
+  let d=null;
+  try{d=JSON.parse(g('hub_ay_'+ref))}catch(e){}
+  if(!d){
+    $('ar').textContent='';$('tr').textContent=t('loading');
+    try{
+      const r=await fetch(`https://api.alquran.cloud/v1/ayah/${ref}/editions/quran-uthmani,ru.kuliev`);
+      const j=await r.json();
+      d={ar:j.data[0].text,ru:j.data[1].text,name:j.data[1].surah.name};
+      s('hub_ay_'+ref,JSON.stringify(d));
+    }catch(e){$('tr').textContent=t('offline');return}
+  }
+  $('ar').textContent=d.ar;$('tr').textContent=d.ru;
+}
+$('nx').onclick=()=>{ai++;loadAyah()};
+
+// ---- План мероприятия и режим дня (текст всегда по-туркменски, как в тетради) ----
+const GEN=[['Gürrüň döwri','Dogry oturyň, maňa ünsli serediň!'],['Gürrüň soraglary','Häzir näçenji ýyl?'],['Täze sözler',''],['Işiň gidişi, gaýtalamak we berkitmek','']];
+const LUNCH=tm=>tm+'  Günortanlyk nahary\nMaksady: Çagalary naharlanmak, sözleýşini ösdürmek.\n- Sen näme iýdiň?\n- Men etli kelemli çorba, çörek iýdim.';
+const GOAL={'Sport oýunlar':T=>'Çagalara «'+T+'» oýnunyň adyny we düzgünini öwretmek. Agzybirligi terbiýelemek.','Hojalyk zähmet':T=>'Çagalara «'+T+'» barada düşündirmek, täze sözleri tanyşdyrmak. Zähmet söýgüsini terbiýelemek.','Medeni dynç alyş':T=>'Çagalara «'+T+'» barada gürrüň bermek, sözleýşini ösdürmek. Dostlugy terbiýelemek.'};
+const ESB={'Sport oýunlar':'Top, suratlar.','Hojalyk zähmet':'bedre, süpürgi, eşik.','Medeni dynç alyş':'Kagyz, reňkli galamlar.'};
+const EV=(tm,name,tok,sok)=>tm+'  '+name+'\nTema: {{'+tok+'}}\nMaksady: '+GOAL[name]('{{'+tok+'}}')+'\nEsbaby: '+ESB[name]+'\nGidişi:\n1) Gürrüň döwri:\n   Dogry oturyň, maňa ünsli serediň!\n2) Gürrüň soraglary:\n   Häzir näçenji ýyl?\n3) Täze sözler:\n   {{'+sok+'}}\n4) Işiň gidişi, gaýtalamak we berkitmek.';
+const HW='16:00  Öý berlen işi ýerine ýetirmek\nMaksady: Mugallymyň öý berlen işini ýerine ýetirmek, gaýtalamak we berkitmek.\nEsbaby: Kitap, depder, ýazgylar.\nGidişi:\n1) Gürrüň döwri:\n   Maňa ünsli serediň!\n2) Gürrüň soraglary:\n   Häzir haýsy pasyl?\n3) Fon. maşk:\n   Şu gün "{{Звук (R, S, L…)}}" sesi nobatçy ses.\n   Matem. soraglaryny ýatdan hasaplatmak.\n   Mysaly işletmek.\n4) Berkitmek:\n   Sorag-jogap arkaly berkitmek.\n   Sen näme etdiň? - Men okadym, ýazdym.\n5) Jemi:\n   Biz näme etdik?\n   Biz ýazdyk, okadyk, mysal çözdük.';
+const READ='17:30  Synpdan daşary okuw\nTema: {{Тема 17:30}}\nMaksady: Çagalara «{{Тема 17:30}}» barada düşündirmek, täze sözleri öwretmek. Agzybirligi, dostlugy terbiýelemek.\nEsbaby: Kitap, suratlar.\nGidişi:\n1) Gürrüň döwri:\n   Maňa ünsli serediň!\n2) Gürrüň soraglary:\n   Häzir haýsy pasyl?\n3) Täze sözler:\n   {{Слова 17:30}}\n4) Okamak we soraglara jogap bermek.';
+const AFTER=n15=>['13:00  Kabul etmek\nÇagalary kabul etmek, öý ýumuşlaryny soramak.',LUNCH('14:00'),EV('15:00',n15,'Тема 15:00','Слова 15:00'),HW,READ,'19:00  Agşamlyk nahary\n20:30  Uka taýýarlyk\n21:00  Uky'];
+const MORN=['7:00  Ukudan oýarmak\nÇagalary ukudan oýarmak, egin-eşigini geýmegi we düşegini özbaşdak ýygnamagy öwretmek.\n- Salam, tur!\n- Men düşegimi ýygnadym.','7:10  Beden maşklaryny ýetirmek\nÇagalar bilen beden maşklaryny ýetirmek.\nMaşklary 1, 2, 3, 4 sanap ýerine ýetirmek.','7:35  Şahsy arassaçylyk\nÇagalara el-ýüzüni, dişini arassa ýuwmagy öwretmek, dogry berjaý etmek.','7:50  Ertirlik nahary\nÇagalary naharlanmak.\n- Sen näme iýdiň?\n- Men süýtli aş, çörek iýdim.','8:20  Sapaga taýýarlyk\nÇagalaryň egin-eşiklerini çalyşmak, sapaga taýýarlyk.\n- Eşigiňizi çalşyryň!\n- Köýnegiňi dogry geý!\n- Kim nobatçy? Eşigini ollap goý!','8:30  Çagalary mugallyma tabşyrmak'];
+const FULL=['8:00  Ukudan oýarmak\nÇagalary ukudan oýarmak, düşeklerini ýygnamagy öwretmek.\n- Salam, çagalar! Turuň!\n- Men turdym, düşegimi ýygnadym.','8:30  Ertirlik nahary\nÇagalaryň el-ýüzüni ýuwdyrmak. Nahar wagty dogry oturmagy öwretmek.\n- Sen näme iýdiň?\n- Men süýtli aş, çörek iýdim, çaý içdim.',LUNCH('12:30'),EV('14:00','Medeni dynç alyş','Тема 14:00','Слова 14:00'),'16:00  Oýlanlyk nahary iýdirmek',EV('18:00','Medeni dynç alyş','Тема 18:00','Слова 18:00'),'19:00  Agşamlyk nahary\n20:30  Uka taýýarlyk\n21:00  Uky'];
+const KINDS=[
+ {ru:'Шаблон: воскресенье (целый день)',tk:'Şablon: Ýekşenbe (tutuş gün)',tpl:FULL},
+ {ru:'Шаблон: понедельник (утро)',tk:'Şablon: Duşenbe (irden)',tpl:MORN},
+ {ru:'Шаблон: вторник/четверг · спорт',tk:'Şablon: Sişenbe/Penşenbe · sport',tpl:AFTER('Sport oýunlar')},
+ {ru:'Шаблон: вторник/четверг · хозтруд',tk:'Şablon: Sişenbe/Penşenbe · hojalyk zähmet',tpl:AFTER('Hojalyk zähmet')},
+ {ru:'Домашние задания',tk:'Öý berlen işi ýerine ýetirmek',time:'16:00',goal:'Mugallymyň öý berlen işini ýerine ýetirmek, gaýtalamak we berkitmek.',equip:'Kitap, depder, ýazgylar.',
+  steps:[['Gürrüň döwri','Maňa ünsli serediň!'],['Gürrüň soraglary',''],['Fon. maşk','Şu gün "__" sesi nobatçy ses.\nMatem. soraglaryny ýatdan hasaplatmak.\nMysaly işletmek.'],['Berkitmek','Sorag-jogap arkaly berkitmek.\nSen näme etdiň?\nMen okadym, ýazdym.'],['Jemi','Biz näme etdik?\nBiz ýazdyk, okadyk, mysal çözdük.']]},
+ {ru:'Внеклассное чтение',tk:'Synpdan daşary okuw',time:'17:30',goal:'________ mazmunyny öwretmek. Agzybirligi, dostlugy terbiýelemek.',equip:'',
+  steps:[['Gürrüň döwri','Maňa ünsli serediň!'],['Gürrüň soraglary','Häzir haýsy pasyl?'],['Täze sözler',''],['Okamak we soraglara jogap bermek','']]},
+ {ru:'Хозяйственный труд',tk:'Hojalyk zähmet',time:'15:00',goal:'',equip:'',steps:GEN},
+ {ru:'Спортивные игры',tk:'Sport oýunlar',time:'15:00',goal:'',equip:'',steps:GEN},
+ {ru:'Обед',tk:'Günortanlyk nahary',time:'14:00',goal:'Çagalary naharlanmak, sözleýşini ösdürmek.',equip:'',extra:'Sen näme iýdiň?\n- Men etli kelemli çorba, çörek iýdim.'},
+ {ru:'Другое',tk:'Başga',time:'',goal:'',equip:'',steps:GEN},
+];
+const TKD=['Ýekşenbe','Duşenbe','Sişenbe','Çarşenbe','Penşenbe','Anna','Şenbe'];
+['ls','lc','lt','lg','lm','lo'].forEach(id=>{
+  const e=$(id);e.value=g('hub_'+id)||'';e.oninput=e.onchange=()=>s('hub_'+id,e.value);
+});
+function fillKinds(){
+  const sel=$('ls'),cur=sel.value||g('hub_ls')||'0';sel.textContent='';
+  KINDS.forEach((k,i)=>{const o=document.createElement('option');o.value=i;o.textContent=lang==='ru'?k.ru+(k.tpl?'':' · '+k.tk):k.tk;sel.append(o)});
+  sel.value=KINDS[+cur]?cur:'0';renderTf();
+}
+const auto={};
+$('ls').addEventListener('change',()=>{
+  renderTf();const k=KINDS[+$('ls').value];if(!k||k.tpl)return;
+  [['lc',k.time],['lg',k.goal],['lm',k.equip]].forEach(([id,v])=>{
+    const e=$(id);if(!e.value||e.value===auto[id]){e.value=v||'';auto[id]=e.value;s('hub_'+id,e.value)}
+  });
+});
+const curKind=()=>KINDS[+$('ls').value||0];
+function renderTf(){
+  const k=curKind(),box=$('pf'),tpl=!!k.tpl;
+  $('fe').hidden=tpl;$('lc').hidden=tpl;$('ls').style.gridColumn=tpl?'1/-1':'';
+  box.textContent='';
+  const names=tpl?[...new Set([...k.tpl.join('\n').matchAll(/\{\{([^}]+)\}\}/g)].map(m=>m[1]))]:[];
+  box.hidden=!names.length;
+  names.forEach(n=>{
+    const i=document.createElement('input');i.placeholder=n;i.value=g('hub_tf_'+n)||'';i.style.marginBottom='8px';
+    i.oninput=()=>s('hub_tf_'+n,i.value);box.append(i);
+  });
+}
+function dayLine(){
+  const d=new Date();
+  return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+String(d.getFullYear()).slice(2)+' ý. '+TKD[d.getDay()]+' güni';
+}
+function lessonText(){
+  const k=curKind(),dl=dayLine(),end=['',`Barlandy: ________   ${dl.split(' ')[0]}`];
+  if(k.tpl){const body=k.tpl.join('\n\n').replace(/\{\{([^}]+)\}\}/g,(m,n)=>(g('hub_tf_'+n)||'').trim()||'________');return [dl,'',body,...end].join('\n')}
+  const v=id=>$(id).value.trim()||'________',tm=$('lc').value.trim();
+  const out=[dl,'',(tm?tm+' ':'')+k.tk,`Tema: ${v('lt')}`,`Maksady: ${v('lg')}`,`Esbaby: ${v('lm')}`];
+  if(k.steps){out.push('','Gidişi:');k.steps.forEach(([a,b],i)=>out.push(`${i+1}) ${a}:`,'   '+(b||'________').replace(/\n/g,'\n   ')))}
+  if(k.extra)out.push('',k.extra);
+  return out.concat(end).join('\n');
+}
+function aiPromptText(){
+  const k=curKind(),v=id=>$(id).value.trim()||'—',tm=$('lc').value.trim();
+  if(k.tpl)return '';
+  return [t('pin'),k.tk+(tm?' ('+tm+')':''),`${t('ltopic')}: ${v('lt')}`,`${t('lgoalL')}: ${v('lg')}`,`${t('lequipL')}: ${v('lm')}`,
+    t('lcourse')+': '+(k.steps?k.steps.map(x=>x[0]).join(' → '):'')+'.',t('pout')].join('\n');
+}
+$('lb').onclick=()=>{const x=lessonText();$('lo').value=x;s('hub_lo',x)};
+$('lp').onclick=async()=>{
+  const x=aiPromptText();
+  if(!x){alert(t('noPrompt'));return}
+  try{await navigator.clipboard.writeText(x);$('lp').textContent=t('copied');setTimeout(()=>$('lp').textContent=t('aiPrompt'),1500)}
+  catch(e){prompt('',x)}
+};
+$('lx').onclick=()=>{
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([$('lo').value],{type:'text/plain;charset=utf-8'}));
+  a.download='meyilnama.txt';document.body.appendChild(a);a.click();a.remove();
+};
+$('lcp').onclick=async()=>{
+  const x=$('lo').value;if(!x)return;
+  try{await navigator.clipboard.writeText(x);$('lcp').textContent=t('copied');setTimeout(()=>$('lcp').textContent=t('copyBtn'),1500)}
+  catch(e){prompt('',x)}
+};
+
+// ---- ИИ-помощник (через Netlify Function) ----
+['aip','aic','aiu','aiq','aia'].forEach(id=>{
+  const e=$(id);
+  e.value=g('hub_'+id)||(id==='aiu'&&/netlify\.app$/.test(location.hostname)?location.origin:(id==='aip'?'claude':''));
+  e.oninput=e.onchange=()=>s('hub_'+id,e.value);
+});
+if(!$('aip').value){$('aip').value='claude';s('hub_aip','claude')}
+async function askAI(prompt,target,btn){
+  const base=$('aiu').value.trim().replace(/\/$/,''),code=$('aic').value;
+  if(!prompt)return;
+  if(!base||!code){alert(t('aiSetup'));return}
+  btn.disabled=true;btn.textContent=t('loading');
+  try{
+    const r=await fetch(base+'/api/ai',{method:'POST',headers:{'Content-Type':'application/json','X-Access-Code':code},body:JSON.stringify({provider:$('aip').value,prompt})});
+    const j=await r.json();
+    if(!r.ok)throw new Error(j.error||r.status);
+    target.value=j.text;s('hub_'+target.id,j.text);
+  }catch(e){alert(t('aiErr')+' '+e.message)}
+  btn.disabled=false;btn.textContent=t(btn.dataset.i);
+}
+$('aib').onclick=()=>askAI($('aiq').value.trim(),$('aia'),$('aib'));
+
+// ---- Мой день / Сад идей / Сундучок ----
+function isoKey(){const p=dateKey().split('-');return p[2]+'-'+p[1]+'-'+p[0]}
+const nid=()=>Date.now()*1000+Math.floor(Math.random()*1000);
+function esc(x){return String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+var DY=null,GD=[],gf='';
+try{DY=JSON.parse(g('hub_day'))}catch(e){}
+if(!DY||typeof DY!=='object')DY={date:'',items:[]};
+if(!Array.isArray(DY.items))DY.items=[];
+try{GD=JSON.parse(g('hub_garden'))||[]}catch(e){}
+if(!Array.isArray(GD))GD=[];
+const dsave=()=>s('hub_day',JSON.stringify(DY));
+const gsave=()=>s('hub_garden',JSON.stringify(GD));
+function renderDay(){
+  if(!DY||!$('dls'))return;
+  const k=isoKey();
+  if(DY.date!==k){DY={date:k,items:DY.items.filter(i=>!i.x)};dsave()}
+  $('dsub').textContent=dateKey().replace(/-/g,'.');
+  const m=($('shift').value||'').trim();
+  $('dmain').textContent=m?'📌 '+m:'';$('dmain').hidden=!m;
+  $('dls').innerHTML=DY.items.map(i=>`<label class="tk"><input type="checkbox" data-ck="${i.id}"${i.x?' checked':''}><span style="flex:1;${i.x?'text-decoration:line-through;color:var(--sub)':''}">${esc(i.t)}</span><button class="b" data-rm="${i.id}" aria-label="delete">✕</button></label>`).join('');
+  const done=DY.items.filter(i=>i.x).length;
+  $('dprog').textContent=DY.items.length?t('dayDone')+': '+done+' / '+DY.items.length:t('dayEmpty');
+  renderWeek();
+}
+$('dadd').onclick=()=>{const x=$('dn').value.trim();if(!x)return;DY.items.push({id:nid(),t:x,x:false});dsave();$('dn').value='';renderDay()};
+$('dn').onkeydown=e=>{if(e.key==='Enter')$('dadd').click()};
+$('dls').onclick=e=>{const r=e.target.closest('[data-rm]');if(r){DY.items=DY.items.filter(v=>String(v.id)!==r.dataset.rm);dsave();renderDay()}};
+$('dls').onchange=e=>{const c=e.target.closest('[data-ck]');if(!c)return;const i=DY.items.find(v=>String(v.id)===c.dataset.ck);if(i){i.x=c.checked;dsave();logDone();renderDay()}};
+$('shift').addEventListener('input',renderDay);
+setInterval(renderDay,60000);
+
+function gparse(x){return x.split(/[,#\s]+/).map(v=>v.trim().toLowerCase()).filter(Boolean).slice(0,6)}
+function renderGarden(){
+  if(!$('gl'))return;
+  const q=$('gs').value.trim().toLowerCase().replace('#','');
+  const tags=[...new Set(GD.flatMap(i=>i.tags))].sort();
+  if(gf&&!tags.includes(gf))gf='';
+  $('gtags').innerHTML=tags.map(x=>`<button class="b${x===gf?' p':''}" style="padding:6px 10px" data-tg="${esc(x)}">#${esc(x)}</button>`).join('');
+  const list=GD.filter(i=>(!gf||i.tags.includes(gf))&&(!q||i.t.toLowerCase().includes(q)||i.tags.some(x=>x.includes(q))));
+  $('gl').innerHTML=list.map(i=>`<div class="tk"><div style="flex:1;min-width:0"><div>${esc(i.t).replace(/\n/g,'<br>')}</div><div class="note" style="margin:2px 0 0">${i.tags.map(x=>'#'+esc(x)).join(' ')} · ${new Date(i.d).toLocaleDateString('ru-RU')}</div></div><button class="b" data-cp="${i.id}" aria-label="copy">⧉</button><button class="b" data-ai="${i.id}" aria-label="AI">✨</button><button class="b" data-dl="${i.id}" aria-label="delete">✕</button></div>`).join('');
+  $('gcnt').textContent=t('gardenCnt')+': '+list.length+' / '+GD.length;
+}
+$('ga').onclick=()=>{const x=$('gi').value.trim();if(!x)return;GD.unshift({id:nid(),t:x,tags:gparse($('gtg').value),d:Date.now()});gsave();$('gi').value='';$('gtg').value='';renderGarden()};
+$('gs').oninput=renderGarden;
+$('gtags').onclick=e=>{const b=e.target.closest('[data-tg]');if(!b)return;gf=gf===b.dataset.tg?'':b.dataset.tg;renderGarden()};
+$('gl').onclick=e=>{
+  const c=e.target.closest('[data-cp]'),a=e.target.closest('[data-ai]'),d=e.target.closest('[data-dl]');
+  const find=id=>GD.find(v=>String(v.id)===id);
+  if(c){const i=find(c.dataset.cp);if(i&&navigator.clipboard)navigator.clipboard.writeText(i.t).catch(()=>{});c.textContent='✓';setTimeout(()=>{c.textContent='⧉'},900)}
+  if(a){const i=find(a.dataset.ai);if(i){$('aiq').value=i.t;s('hub_aiq',i.t);$('c-ai').classList.remove('fold');$('aiq').scrollIntoView({behavior:'smooth',block:'center'})}}
+  if(d&&confirm(t('gardenDel'))){GD=GD.filter(v=>String(v.id)!==d.dataset.dl);gsave();renderGarden()}
+};
+
+$('bk').onclick=()=>{
+  const o={};
+  try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('hub_')&&k!=='hub_aic')o[k]=localStorage.getItem(k)}}catch(e){}
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify({app:'yusup-hub',v:1,at:new Date().toISOString(),data:o})],{type:'application/json'}));
+  a.download='hub-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();
+};
+$('rs').onclick=()=>$('rf').click();
+$('rf').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  f.text().then(x=>{
+    try{
+      const j=JSON.parse(x);if(j.app!=='yusup-hub'||!j.data)throw 0;
+      if(!confirm(t('bkAsk')))return;
+      Object.keys(j.data).forEach(k=>{if(k.startsWith('hub_')&&k!=='hub_aic')s(k,j.data[k])});
+      location.reload();
+    }catch(err){alert(t('bkBad'))}
+  });
+  e.target.value='';
+};
+
+var ti=0;
+function tipIdx(a){return (Math.floor(Date.parse(isoKey())/86400000)+ti)%a.length}
+function renderTip(){
+  if(!$('tipx'))return;
+  const a=t('tips');$('tipx').textContent=a[tipIdx(a)];
+}
+$('tnx').onclick=()=>{ti++;renderTip()};
+$('tsv').onclick=()=>{
+  const a=t('tips'),x=a[tipIdx(a)];
+  if(!GD.some(i=>i.t===x)){GD.unshift({id:nid(),t:x,tags:[lang==='tk'?'maslahat':'совет'],d:Date.now()});gsave();renderGarden()}
+  $('tsv').textContent=t('tipSaved');setTimeout(()=>{$('tsv').textContent=t('tipSave')},1200);
+};
+
+var ci=0;
+function clIdx(a){return (Math.floor(Date.parse(isoKey())/86400000)+ci)%a.length}
+function renderIdea(){
+  if(!$('clx'))return;
+  const a=t('ideas');$('clx').textContent=a[clIdx(a)];
+}
+$('cnx').onclick=()=>{ci++;renderIdea()};
+$('csv').onclick=()=>{
+  const a=t('ideas'),x=a[clIdx(a)];
+  if(!GD.some(i=>i.t===x)){GD.unshift({id:nid(),t:x,tags:['claude'],d:Date.now()});gsave();renderGarden()}
+  $('csv').textContent=t('tipSaved');setTimeout(()=>{$('csv').textContent=t('tipSave')},1200);
+};
+$('cai').onclick=()=>{$('aiq').value=t('clPrompt');s('hub_aiq',t('clPrompt'));$('c-ai').classList.remove('fold');$('aiq').scrollIntoView({behavior:'smooth',block:'center'})};
+
+function logDone(){
+  let st={};try{st=JSON.parse(g('hub_stats'))||{}}catch(e){}
+  st[DY.date]=DY.items.filter(i=>i.x).length;
+  const ks=Object.keys(st).sort();while(ks.length>60)delete st[ks.shift()];
+  s('hub_stats',JSON.stringify(st));
+}
+function renderWeek(){
+  if(!$('wk'))return;
+  let st={};try{st=JSON.parse(g('hub_stats'))||{}}catch(e){}
+  const base=Date.parse(isoKey()),days=[];
+  for(let n=6;n>=0;n--){const ms=base-n*86400000;days.push({k:new Date(ms).toISOString().slice(0,10),w:new Date(ms).getUTCDay(),today:n===0})}
+  const vals=days.map(d=>+st[d.k]||0),max=Math.max(1,...vals),total=vals.reduce((a,b)=>a+b,0);
+  $('wk').innerHTML=days.map((d,i)=>`<div style="flex:1;text-align:center;font-size:11px;color:var(--sub)"><div>${vals[i]||''}</div><div style="height:${Math.max(4,Math.round(vals[i]/max*56))}px;background:${d.today?'var(--a)':'var(--bd)'};border-radius:6px;margin:2px 0"></div><div>${t('wd')[d.w]}</div></div>`).join('');
+  $('wkt').textContent=total?t('weekTotal')+': '+total+' · '+t('weekBest')+': '+max:t('weekEmpty');
+}
+
+// ---- Чтение Корана ----
+var RD={s:1};
+try{const x=JSON.parse(g('hub_read'));if(x)RD.s=Math.min(114,Math.max(1,+x.s||1))}catch(e){}
+const rclean=x=>esc(String(x).replace(/<[^>]*>/g,'').replace(/&nbsp;|&thinsp;/g,' ').replace(/\s+/g,' ').trim());
+const rsave=()=>s('hub_read',JSON.stringify(RD));
+function rfill(){
+  if(!$('rb'))return;
+  let o='';for(let i=1;i<=114;i++)o+=`<option value="${i}">${t('rSura')} ${i}</option>`;
+  $('rb').innerHTML=o;$('rb').value=String(RD.s);
+}
+async function rload(){
+  const box=$('rbody');
+  $('rhint').hidden=true;box.textContent=t('loading');$('rsrc').textContent='';
+  try{
+    const r=await fetch(`https://api.alquran.cloud/v1/surah/${RD.s}/editions/quran-uthmani,ru.kuliev`),j=await r.json();
+    const ar=j.data[0].ayahs,ru=j.data[1].ayahs;
+    $('rref').textContent=t('rSura')+' '+RD.s+' · '+j.data[0].name;$('rl').href='https://quran.com/'+RD.s;$('rsrc').textContent=t('rSrcQ');
+    box.innerHTML=ar.map((a,i)=>`<div style="margin:0 0 12px"><span class="note">${a.numberInSurah}</span><div class="ar" dir="rtl" style="font-size:21px;line-height:1.8">${rclean(a.text)}</div>${ru[i]?`<div>${rclean(ru[i].text)}</div>`:''}</div>`).join('');
+    box.scrollTop=0;
+  }catch(e){box.textContent=navigator.onLine?t('rErr'):t('offline')}
+}
+function rstep(d){RD.s=Math.min(114,Math.max(1,RD.s+d));rsave();rfill();rload()}
+$('rb').onchange=()=>{RD.s=+$('rb').value;rsave()};
+$('rg').onclick=rload;
+$('rn').onclick=()=>rstep(1);
+$('rp').onclick=()=>rstep(-1);
+// ---- Мои сайты ----
+var SL=null,sedit=false;
+try{SL=JSON.parse(g('hub_links'))}catch(e){}
+if(!Array.isArray(SL))SL=[{n:'Prompty',u:'https://ym855076-commits.github.io/prompty/'},{n:'Sözi Ýygna',u:'https://ym855076-commits.github.io/sozi-yygna/'}];
+const lsave=()=>s('hub_links',JSON.stringify(SL));
+function renderSites(){
+  if(!$('sl'))return;
+  $('sl').innerHTML=SL.map((x,i)=>`<a class="l" href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.n)}</a>${sedit?`<button class="b" data-sd="${i}" aria-label="delete">✕</button>`:''}`).join('');
+  $('sadd').hidden=!sedit;
+  $('sed').textContent=sedit?t('siteDone'):t('siteEdit');
+}
+$('sed').onclick=()=>{sedit=!sedit;renderSites()};
+$('sl').onclick=e=>{const d=e.target.closest('[data-sd]');if(d&&confirm(t('siteDel'))){SL.splice(+d.dataset.sd,1);lsave();renderSites()}};
+$('sok').onclick=()=>{
+  const n=$('sn').value.trim();let u=$('su').value.trim();if(!n||!u)return;
+  if(!/^https?:\/\//i.test(u))u='https://'+u;
+  SL.push({n,u});lsave();$('sn').value='';$('su').value='';renderSites();
+};
+// ---- конец ----
+// ---- Навигация и сворачивание карточек ----
+$('nv').onclick=e=>{
+  const b=e.target.closest('[data-go]');if(!b)return;
+  const c=$(b.dataset.go);if(!c)return;
+  c.classList.remove('fold');c.scrollIntoView({behavior:'smooth',block:'start'});
+};
+const cards=[...document.querySelectorAll('.card')];
+let fold=[];try{fold=JSON.parse(g('hub_fold2'))||[]}catch(e){}
+cards.forEach((c,i)=>{
+  const h=c.querySelector('h3');if(!h)return;
+  h.tabIndex=0;h.setAttribute('role','button');
+  const set=f=>{c.classList.toggle('fold',f);h.setAttribute('aria-expanded',String(!f))};
+  set(fold.includes(h.dataset.i));
+  const tg=()=>{set(!c.classList.contains('fold'));s('hub_fold2',JSON.stringify(cards.map(x=>x.classList.contains('fold')?x.querySelector('h3').dataset.i:'').filter(Boolean)))};
+  h.onclick=tg;
+  h.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tg()}};
+});
+
+const ZS=[1,1.1,1.2,1.3];let zi=+g('hub_zoom')||0;if(!(zi>=0&&zi<ZS.length))zi=0;
+const zap=()=>{document.body.style.zoom=ZS[zi]};zap();
+$('zm').onclick=()=>{zi=(zi+1)%ZS.length;s('hub_zoom',zi);zap()};
+
+applyLang();loadAyah();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
